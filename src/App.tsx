@@ -26,7 +26,15 @@ import { ProjectDialog } from "./components/ProjectDialog";
 import { RobotFallback } from "./components/RobotFallback";
 import { useReducedMotion } from "./hooks";
 gsap.registerPlugin(ScrollTrigger);
-const Robot = lazy(() => import("./components/Robot"));
+let robotModule: Promise<typeof import("./components/Robot")> | undefined;
+const loadRobot = () => {
+  if (!robotModule) {
+    robotModule = import("./components/Robot");
+    void robotModule.catch(() => {});
+  }
+  return robotModule;
+};
+const Robot = lazy(loadRobot);
 class RobotBoundary extends Component<
   { children: ReactNode },
   { failed: boolean }
@@ -97,9 +105,7 @@ function AnimatedDisclosure({
   const id = useId();
   return (
     <div
-      className={
-        "animated-disclosure " + className + (open ? " is-open" : "")
-      }
+      className={"animated-disclosure " + className + (open ? " is-open" : "")}
     >
       <button
         type="button"
@@ -135,12 +141,24 @@ function App() {
     [filter, setFilter] = useState("All work"),
     [menuOpen, setMenuOpen] = useState(false),
     [robotActive, setRobotActive] = useState(true),
-    [robotLoaded, setRobotLoaded] = useState(false),
+    [robotMode, setRobotMode] = useState<"loading" | "webgl" | "static">(
+      "loading",
+    ),
+    [pageReady, setPageReady] = useState(document.readyState === "complete"),
     [motionPaused, setMotionPaused] = useState(false),
     [copied, setCopied] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const pendingNavigation = useRef<string | null>(null);
   const reduced = useReducedMotion();
+  useEffect(() => {
+    if (document.readyState === "complete") {
+      setPageReady(true);
+      return;
+    }
+    const markReady = () => setPageReady(true);
+    window.addEventListener("load", markReady, { once: true });
+    return () => window.removeEventListener("load", markReady);
+  }, []);
   const finishMenu = () => {
     setMenuOpen(false);
     const id = pendingNavigation.current;
@@ -162,7 +180,7 @@ function App() {
   };
   useEffect(() => {
     if (reduced) {
-      setRobotLoaded(false);
+      setRobotMode("static");
       return;
     }
     try {
@@ -172,10 +190,13 @@ function App() {
       });
       if (gl) {
         gl.getExtension("WEBGL_lose_context")?.loseContext();
-        setRobotLoaded(true);
+        loadRobot();
+        setRobotMode("webgl");
+      } else {
+        setRobotMode("static");
       }
     } catch {
-      setRobotLoaded(false);
+      setRobotMode("static");
     }
   }, [reduced]);
   useEffect(() => {
@@ -386,16 +407,17 @@ function App() {
             aria-label="Minimalist monochrome developer robot"
           >
             <RobotBoundary>
-              {robotLoaded ? (
-                <Suspense fallback={<RobotFallback />}>
+              {pageReady && robotMode === "webgl" ? (
+                <Suspense fallback={null}>
                   <Robot
                     active={robotActive}
                     paused={reduced || motionPaused}
+                    animateEntrance={!reduced}
                   />
                 </Suspense>
-              ) : (
+              ) : pageReady && robotMode === "static" ? (
                 <RobotFallback />
-              )}
+              ) : null}
             </RobotBoundary>
           </div>
           <div className="robot-caption">
@@ -405,8 +427,9 @@ function App() {
             <div className="hero-intro">
               <span className="eyebrow">HELLO, I’M ASEEM.</span>
               <h2>
-                Aspiring Python Backend
-                <br />& AI Developer
+                Exploring Backend Languages
+                <br />
+                &amp; Building AI Automations
               </h2>
               <p>
                 Learning the systems behind the screen.
@@ -442,7 +465,7 @@ function App() {
             </div>
             <div className="hero-side">
               <Socials />
-              {robotLoaded && (
+              {pageReady && robotMode === "webgl" && (
                 <button
                   className="motion-toggle"
                   onClick={() => setMotionPaused((p) => !p)}
@@ -471,8 +494,8 @@ function App() {
               <p>
                 I’m Muhammad Aseem, a Computing student at Arden University,
                 studying through its Roots IVY International College teaching
-                centre in Lahore while working toward a career in Python
-                backend development and artificial intelligence.
+                centre in Lahore while working toward a career in Python backend
+                development and artificial intelligence.
               </p>
               <p>
                 My frontend background taught me to turn ideas into interfaces.

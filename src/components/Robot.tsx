@@ -47,10 +47,21 @@ function Joint({
     </mesh>
   );
 }
-function Scene({ paused }: { paused: boolean }) {
+function Scene({
+  paused,
+  animateEntrance,
+}: {
+  paused: boolean;
+  animateEntrance: boolean;
+}) {
   const rig = useRef<THREE.Group>(null),
     head = useRef<THREE.Group>(null),
-    cursor = useRef({ x: 0, y: 0 });
+    cursor = useRef({ x: 0, y: 0 }),
+    leftArm = useRef<THREE.Group>(null),
+    rightArm = useRef<THREE.Group>(null),
+    leftLeg = useRef<THREE.Group>(null),
+    rightLeg = useRef<THREE.Group>(null),
+    entranceProgress = useRef(0);
   useEffect(() => {
     const move = (e: PointerEvent) => {
       cursor.current = {
@@ -66,8 +77,27 @@ function Scene({ paused }: { paused: boolean }) {
     if (paused) return;
     const t = clock.getElapsedTime();
     const smooth = 1 - Math.exp(-Math.min(delta, 0.05) * 5);
+    if (animateEntrance && entranceProgress.current < 1) {
+      entranceProgress.current = Math.min(
+        entranceProgress.current + delta / 3.4,
+        1,
+      );
+      const progress = entranceProgress.current;
+      const eased =
+        progress < 0.5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
+      if (rig.current) rig.current.position.x = 4.1 * (1 - eased);
+    }
+    const gait =
+      animateEntrance && entranceProgress.current < 1
+        ? Math.sin(t * 7) * Math.sin(Math.PI * entranceProgress.current)
+        : 0;
+    if (leftArm.current) leftArm.current.rotation.x = gait * 0.52;
+    if (rightArm.current) rightArm.current.rotation.x = -gait * 0.52;
+    if (leftLeg.current) leftLeg.current.rotation.x = -gait * 0.42;
+    if (rightLeg.current) rightLeg.current.rotation.x = gait * 0.42;
     if (rig.current) {
-      rig.current.position.y = Math.sin(t * 0.9) * 0.028;
+      rig.current.position.y =
+        Math.sin(t * 0.9) * 0.028 + Math.abs(gait) * 0.018;
       rig.current.rotation.z = Math.sin(t * 0.55) * 0.012;
     }
     if (head.current) {
@@ -100,7 +130,11 @@ function Scene({ paused }: { paused: boolean }) {
         shadow-normalBias={0.03}
       />
       <directionalLight position={[-5, 3, -3]} intensity={3} color="#ffffff" />
-      <group ref={rig} rotation={[0, -0.2, -0.035]}>
+      <group
+        ref={rig}
+        position={animateEntrance ? [4.1, 0, 0] : [0, 0, 0]}
+        rotation={[0, -0.2, -0.035]}
+      >
         <group ref={head} position={[0, 1.48, 0]}>
           <Box size={[1.35, 1.04, 0.92]} radius={0.27} />
           <Box
@@ -167,6 +201,7 @@ function Scene({ paused }: { paused: boolean }) {
         {[-1, 1].map((side) => (
           <group key={side}>
             <group
+              ref={side < 0 ? leftArm : rightArm}
               position={[side * 0.69, 0.58, 0]}
               rotation={[0, 0, side * 0.12]}
             >
@@ -200,7 +235,10 @@ function Scene({ paused }: { paused: boolean }) {
                 />
               </group>
             </group>
-            <group position={[side * 0.275, -0.43, 0]}>
+            <group
+              ref={side < 0 ? leftLeg : rightLeg}
+              position={[side * 0.275, -0.43, 0]}
+            >
               <Joint position={[0, 0, 0]} radius={0.2} />
               <Box
                 size={[0.38, 0.56, 0.43]}
@@ -242,9 +280,11 @@ function Scene({ paused }: { paused: boolean }) {
 export default function Robot({
   active,
   paused,
+  animateEntrance,
 }: {
   active: boolean;
   paused: boolean;
+  animateEntrance: boolean;
 }) {
   const [visible, setVisible] = useState(!document.hidden);
   useEffect(() => {
@@ -262,7 +302,7 @@ export default function Robot({
       gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
       fallback={<RobotFallback />}
     >
-      <Scene paused={paused} />
+      <Scene paused={paused} animateEntrance={animateEntrance} />
     </Canvas>
   );
 }
