@@ -1,8 +1,23 @@
-import { Component, Suspense, lazy, useEffect, useRef, useState } from "react";
+import {
+  Component,
+  Suspense,
+  lazy,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { profile, projects, skills, learning, certification } from "./data";
+import {
+  assetUrl,
+  profile,
+  projects,
+  skills,
+  learning,
+  certification,
+} from "./data";
 import type { Project } from "./data";
 import { Icon } from "./components/Icon";
 import { Spotlight } from "./components/Spotlight";
@@ -65,6 +80,52 @@ function SectionTitle({
     </div>
   );
 }
+function AnimatedDisclosure({
+  className = "",
+  triggerClassName,
+  panelClassName = "",
+  label,
+  children,
+}: {
+  className?: string;
+  triggerClassName: string;
+  panelClassName?: string;
+  label: ReactNode;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const id = useId();
+  return (
+    <div
+      className={
+        "animated-disclosure " + className + (open ? " is-open" : "")
+      }
+    >
+      <button
+        type="button"
+        className={triggerClassName}
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => setOpen((value) => !value)}
+      >
+        {label}
+      </button>
+      <div
+        className="disclosure-panel"
+        id={id}
+        aria-hidden={!open}
+        inert={!open}
+        onTransitionEnd={(event) => {
+          if (event.target === event.currentTarget) ScrollTrigger.refresh();
+        }}
+      >
+        <div className={"disclosure-panel-inner " + panelClassName}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
 function App() {
   const root = useRef<HTMLDivElement>(null),
     hero = useRef<HTMLElement>(null),
@@ -77,6 +138,7 @@ function App() {
     [robotLoaded, setRobotLoaded] = useState(false),
     [motionPaused, setMotionPaused] = useState(false),
     [copied, setCopied] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const pendingNavigation = useRef<string | null>(null);
   const reduced = useReducedMotion();
   const finishMenu = () => {
@@ -175,6 +237,23 @@ function App() {
   useEffect(() => {
     ScrollTrigger.refresh();
   }, [filter]);
+  useEffect(() => {
+    let contactVisible = false;
+    const updateVisibility = () =>
+      setShowBackToTop(window.scrollY > 560 && !contactVisible);
+    updateVisibility();
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    const contact = document.getElementById("contact");
+    const observer = new IntersectionObserver(([entry]) => {
+      contactVisible = entry.isIntersecting;
+      updateVisibility();
+    });
+    if (contact) observer.observe(contact);
+    return () => {
+      window.removeEventListener("scroll", updateVisibility);
+      observer.disconnect();
+    };
+  }, []);
   const copyEmail = async () => {
     try {
       await navigator.clipboard.writeText(profile.email);
@@ -394,8 +473,9 @@ function App() {
             <div className="about-copy reveal">
               <p>
                 I’m Muhammad Aseem, a Computing student at Arden University,
-                working toward a career in Python backend development and
-                artificial intelligence.
+                studying through its Roots IVY International College teaching
+                centre in Lahore while working toward a career in Python
+                backend development and artificial intelligence.
               </p>
               <p>
                 My frontend background taught me to turn ideas into interfaces.
@@ -481,18 +561,9 @@ function App() {
                   </Spotlight>
                   <div className="project-info">
                     <div>
-                      <h3>
-                        <button onClick={() => setSelected(p)}>{p.name}</button>
-                      </h3>
+                      <h3>{p.name}</h3>
                       <p>{p.description}</p>
                     </div>
-                    <button
-                      className="project-arrow icon-button"
-                      aria-label={"Open " + p.name}
-                      onClick={() => setSelected(p)}
-                    >
-                      <Icon size={23} />
-                    </button>
                   </div>
                   <div className="project-meta">
                     <span>{p.label}</span>
@@ -516,31 +587,41 @@ function App() {
               <div className="experience-date">JAN 2023 — JAN 2024</div>
               <div className="experience-main">
                 <h3>
-                  Waan Tech <span>(Pvt) Ltd</span>
+                  <a
+                    href="https://waantech.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Waan Tech <span>(Pvt) Ltd</span> <Icon size={16} />
+                  </a>
                 </h3>
                 <p>Web Development Intern</p>
-                <details>
-                  <summary>
-                    My contribution <Icon name="plus" size={18} />
-                  </summary>
-                  <div className="experience-details">
-                    <p>
-                      Worked on frontend pages, layouts, sliders and bug fixes,
-                      including work on the company’s main website.
-                    </p>
-                    <div className="tags">
-                      {[
-                        "HTML",
-                        "CSS / SCSS",
-                        "JavaScript",
-                        "Bootstrap",
-                        "Tailwind CSS",
-                      ].map((x) => (
-                        <span key={x}>{x}</span>
-                      ))}
-                    </div>
+                <AnimatedDisclosure
+                  className="experience-disclosure"
+                  triggerClassName="experience-trigger"
+                  panelClassName="experience-details"
+                  label={
+                    <>
+                      My contribution <Icon name="plus" size={18} />
+                    </>
+                  }
+                >
+                  <p>
+                    Worked on frontend pages, layouts, sliders and bug fixes,
+                    including work on the company’s main website.
+                  </p>
+                  <div className="tags">
+                    {[
+                      "HTML",
+                      "CSS / SCSS",
+                      "JavaScript",
+                      "Bootstrap",
+                      "Tailwind CSS",
+                    ].map((x) => (
+                      <span key={x}>{x}</span>
+                    ))}
                   </div>
-                </details>
+                </AnimatedDisclosure>
               </div>
               <span className="experience-symbol" aria-hidden="true">
                 ↗
@@ -594,24 +675,29 @@ function App() {
             </div>
             <div className="learning-rows">
               {learning.map((x) => (
-                <details key={x.number} className="learning-row">
-                  <summary>
-                    <span className="section-index">{x.number}</span>
-                    <h3>{x.title}</h3>
-                    <span className="learning-status">IN PROGRESS</span>
-                    <span className="expand-icon">
-                      <Icon name="plus" size={22} />
-                    </span>
-                  </summary>
-                  <div className="learning-answer">
-                    <p>{x.text}</p>
-                    <div className="tags">
-                      {x.tags.map((t) => (
-                        <span key={t}>{t}</span>
-                      ))}
-                    </div>
+                <AnimatedDisclosure
+                  key={x.number}
+                  className="learning-row"
+                  triggerClassName="learning-trigger"
+                  panelClassName="learning-answer"
+                  label={
+                    <>
+                      <span className="section-index">{x.number}</span>
+                      <span className="learning-title">{x.title}</span>
+                      <span className="learning-status">IN PROGRESS</span>
+                      <span className="expand-icon">
+                        <Icon name="plus" size={22} />
+                      </span>
+                    </>
+                  }
+                >
+                  <p>{x.text}</p>
+                  <div className="tags">
+                    {x.tags.map((t) => (
+                      <span key={t}>{t}</span>
+                    ))}
                   </div>
-                </details>
+                </AnimatedDisclosure>
               ))}
             </div>
           </div>
@@ -626,6 +712,17 @@ function App() {
               <span className="eyebrow">2023 — 2027 (EXPECTED)</span>
               <h3>Arden University</h3>
               <p>BSc (Computing)</p>
+              <address className="education-centre">
+                Studying at{" "}
+                <a
+                  href="https://www.london.ac.uk/study/where-study/teaching-centre/pakistan/roots-ivy-international-college-riic-lahore"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Roots IVY International College (RIIC) — Lahore, Pakistan
+                </a>
+                , an Arden University teaching centre.
+              </address>
             </div>
             <span className="status-tag">CURRENTLY STUDYING</span>
           </div>
@@ -641,7 +738,7 @@ function App() {
               aria-label="View Prompt Engineering certificate PDF"
             >
               <img
-                src="/certificate.webp"
+                src={assetUrl("certificate.webp")}
                 alt="Udemy certificate of completion awarded to Muhammad Aseem, August 28, 2026"
                 width="800"
                 height="600"
@@ -706,7 +803,7 @@ function App() {
                   {copied ? "Copied" : ""}
                 </span>
                 <a className="phone" href={"tel:" + profile.phone}>
-                  {profile.phone}
+                  <span aria-hidden="true">🇵🇰</span> +92 328 496 4700
                 </a>
               </div>
               <Socials labels />
@@ -721,6 +818,19 @@ function App() {
           Back to top <Icon name="arrow" size={16} />
         </a>
       </footer>
+      <button
+        className="back-to-top"
+        type="button"
+        aria-label="Back to top"
+        title="Back to top"
+        aria-hidden={!showBackToTop}
+        tabIndex={showBackToTop ? 0 : -1}
+        onClick={() =>
+          window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })
+        }
+      >
+        <Icon name="up" size={20} />
+      </button>
       {selected && (
         <ProjectDialog
           key={selected.id}

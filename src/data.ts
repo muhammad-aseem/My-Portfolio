@@ -1,14 +1,16 @@
+export const assetUrl = (file: string) => `${import.meta.env.BASE_URL}${file}`;
+
 export const profile = {
   name: "Muhammad Aseem",
   role: "Aspiring Python Backend & AI Developer",
   email: "aseem.cod.dev@gmail.com",
-  phone: "03284964700",
+  phone: "+923284964700",
   github: "https://github.com/muhammad-aseem",
   linkedin: "https://www.linkedin.com/in/muhammad-aseem-498582328",
   x: "https://x.com/aseem_fs",
   cv: {
-    view: "/Muhammad-Aseem-CV.svg",
-    download: "/Muhammad-Aseem-CV.pdf",
+    view: assetUrl("Muhammad-Aseem-CV.svg"),
+    download: assetUrl("Muhammad-Aseem-CV-latest.pdf"),
     filename: "Muhammad_Aseem_CV.pdf",
   },
 };
@@ -181,6 +183,6 @@ export const certification = {
   issuer: "Udemy",
   date: "August 28, 2026",
   credential: "https://ude.my/UC-5a7fd4f5-18a9-4896-acaa-1bb3883ddc24",
-  file: "/prompt-engineering.pdf",
+  file: assetUrl("prompt-engineering.pdf"),
   id: "UC-5a7fd4f5-18a9-4896-acaa-1bb3883ddc24",
 };

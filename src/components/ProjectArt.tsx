@@ -1,3 +1,5 @@
+import { assetUrl } from "../data";
+
 export function ProjectArt({ kind }: { kind: string }) {
   if (kind === "catalyst")
     return (
@@ -9,7 +11,7 @@ export function ProjectArt({ kind }: { kind: string }) {
           <small>clickcatalyst.uk</small>
         </div>
         <img
-          src="/click-catalyst.webp"
+          src={assetUrl("click-catalyst.webp")}
           width="1348"
           height="927"
           alt="Click Catalyst’s current live homepage"

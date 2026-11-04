@@ -60,6 +60,12 @@ export function Icon({
         <path d="M12 3v18m-6-6 6 6 6-6" />
       </svg>
     );
+  if (name === "up")
+    return (
+      <svg {...common}>
+        <path d="M12 21V3m-6 6 6-6 6 6" />
+      </svg>
+    );
   if (name === "plus")
     return (
       <svg {...common}>
