@@ -165,21 +165,18 @@ function App() {
       setRobotLoaded(false);
       return;
     }
-    const idle = window.setTimeout(() => {
-      try {
-        const probe = document.createElement("canvas");
-        const gl = probe.getContext("webgl2", {
-          failIfMajorPerformanceCaveat: true,
-        });
-        if (gl) {
-          gl.getExtension("WEBGL_lose_context")?.loseContext();
-          setRobotLoaded(true);
-        }
-      } catch {
-        setRobotLoaded(false);
+    try {
+      const probe = document.createElement("canvas");
+      const gl = probe.getContext("webgl2", {
+        failIfMajorPerformanceCaveat: true,
+      });
+      if (gl) {
+        gl.getExtension("WEBGL_lose_context")?.loseContext();
+        setRobotLoaded(true);
       }
-    }, 750);
-    return () => clearTimeout(idle);
+    } catch {
+      setRobotLoaded(false);
+    }
   }, [reduced]);
   useEffect(() => {
     const el = hero.current;
@@ -623,9 +620,6 @@ function App() {
                   </div>
                 </AnimatedDisclosure>
               </div>
-              <span className="experience-symbol" aria-hidden="true">
-                ↗
-              </span>
             </div>
             <p className="experience-note reveal">
               A foundation in interfaces.
