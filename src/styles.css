@@ -1862,7 +1862,7 @@ sup {
   }
   .robot-stage {
     width: 60%;
-    height: 340px;
+    height: 280px;
     right: 1%;
     top: 135px;
     z-index: 0;
@@ -2325,7 +2325,7 @@ sup {
   }
   .robot-stage {
     width: 69%;
-    height: 315px;
+    height: 260px;
     right: -2%;
     top: 126px;
   }
