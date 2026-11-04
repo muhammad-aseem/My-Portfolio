@@ -52,17 +52,18 @@ The role is “Aspiring Python Backend & AI Developer.” The degree is BSc (Com
 
 Only Click Catalyst and the three specified Python projects are featured. The Python programs have terminal examples, not invented live web demos. Click Catalyst’s repository is private and labeled that way. Its screenshots show the current live site, which has evolved beyond the inspected repository; the description limits the contribution to frontend work.
 
-The phone number is retained exactly as supplied, `03284964700`; no international dialing prefix was assumed. Email and social links are direct links. Copy-email success feedback is included, with an email-client fallback when clipboard permission is unavailable. No form pretends to send a message.
+The phone link uses Pakistan’s international dialing prefix, `+92`, and the contact section displays the number in a readable format. Email and social links are direct links. Copy-email success feedback is included, with an email-client fallback when clipboard permission is unavailable. No form pretends to send a message.
 
-## Deploy to Vercel or Netlify
+## Deploy to GitHub Pages
 
-The project has no server dependency or environment secrets.
+The production site is deployed from `main` by `.github/workflows/deploy.yml`. GitHub Pages should use **GitHub Actions** as its source. The Vite base path is configured for this repository’s project site:
 
-1. Push these files to a **new** repository of your choice. Do not overwrite an existing project.
-2. Import the repository in Vercel or Netlify. The included configuration selects `npm run build` and `dist/`.
-3. Before a new-domain deployment, replace the origin in `index.html` (canonical, Open Graph, Twitter card and JSON-LD) and `public/robots.txt` / `public/sitemap.xml` with the final domain.
-4. Deploy, check asset paths and contact links, and verify the 3D model on a WebGL-capable physical device.
+`https://muhammad-aseem.github.io/My-Portfolio/`
 
-All required project assets are local. Manrope is distributed with its original open font license in `public/fonts/Manrope-LICENSE.txt`. The Python project artwork and robot geometry/illustration are original code assets. Click Catalyst images are captures of the selected public project site. The certificate PDF is the user-supplied original. The CV SVG is also supplied by the user; the PDF preserves its embedded image without rewriting its contents.
+Push changes to `main` to trigger a fresh build and deployment. The workflow runs `npm ci`, `npm run build`, and publishes `dist/`. The project has no server dependency or environment secrets.
+
+Vercel and Netlify configuration files are also included; both use the same Vite production build.
+
+All required project assets are local. Manrope is distributed with its original open font license in `public/fonts/Manrope-LICENSE.txt`. The Python project artwork and robot geometry/illustration are original code assets. Click Catalyst images are captures of the selected public project site. The certificate PDF and current CV files are user-supplied.
 
 See `TESTING.md` for the checks actually performed and remaining verification limits.

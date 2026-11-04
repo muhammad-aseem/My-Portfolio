@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { assetUrl } from "../data";
 import type { Project } from "../data";
 import { Icon } from "./Icon";
 import { ProjectArt } from "./ProjectArt";
@@ -45,9 +46,11 @@ export function ProjectDialog({
           {project.live ? (
             <img
               src={
-                slide === 0
-                  ? "/click-catalyst.webp"
-                  : "/click-catalyst-sections.webp"
+                assetUrl(
+                  slide === 0
+                    ? "click-catalyst.webp"
+                    : "click-catalyst-sections.webp",
+                )
               }
               alt={
                 slide === 0
