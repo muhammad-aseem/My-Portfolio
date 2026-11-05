@@ -1,69 +1,92 @@
 # Muhammad Aseem — Portfolio
 
-A complete React + TypeScript + Vite portfolio for an aspiring Python backend and AI developer. Includes GSAP/ScrollTrigger reveals, a cursor-following peach spotlight, project filtering and galleries, accessible native dialogs, expandable information panels, a verified certificate PDF, and a lazy-loaded Three.js/React Three Fiber robot.
+Personal portfolio for **Muhammad Aseem**, an aspiring Python backend and AI developer. The site presents selected projects, technical interests, experience, and contact information in a responsive, accessible interface.
+
+**Live website:** [muhammad-aseem.github.io/My-Portfolio](https://muhammad-aseem.github.io/My-Portfolio/)
+
+## Technology
+
+| Area | Technologies |
+| --- | --- |
+| UI | React 19, React DOM, TypeScript |
+| Build and development | Vite 7, `@vitejs/plugin-react`, Node.js, npm |
+| Motion and scroll effects | GSAP, ScrollTrigger, CSS animations, `requestAnimationFrame` |
+| 3D scene | Three.js, React Three Fiber, WebGL 2 |
+| Styling and typography | CSS, responsive layouts, Manrope Variable (self-hosted with Fontsource) |
+| Quality and formatting | TypeScript compiler, Prettier |
+| Hosting and deployment | GitHub Pages, GitHub Actions |
+
+### Frontend
+
+The portfolio is a client-rendered React application written in TypeScript. Vite serves the development app and bundles the static production files. The interface includes responsive navigation, project filters, accessible project dialogs and galleries, expandable information panels, contact links, and a cursor-following spotlight effect.
+
+GSAP and ScrollTrigger animate section reveals. CSS handles the visual system, responsive layouts, focus states, and reduced-motion behavior. The Manrope variable font and site assets are stored locally so the site does not depend on third-party font or image hosts.
+
+### Backend
+
+**There is no backend in this project.** The site is a static frontend and does not run a server, database, or custom API. GitHub Pages hosts the built files. Contact and social actions are direct links; the email-copy control uses the browser clipboard when available and falls back to an email link.
+
+## Procedural 3D robot
+
+The robot is an original, code-built model in `src/components/Robot.tsx`; it is not an imported or downloaded model. Its geometry is assembled from Three.js meshes, including rounded boxes, capsules, cylinders, and spheres. Hierarchical groups form the head, torso, joints, arms, and legs. Standard materials, directional and hemisphere lighting, shadows, and a ground plane give the scene its finish.
+
+React Three Fiber mounts the scene in a Three.js canvas. Its frame loop animates the robot’s entrance and subtle idle motion, while the head smoothly follows pointer movement. The component is dynamically imported only when WebGL 2 is available. Reduced-motion preferences, unsupported WebGL, or renderer errors use the static illustration in `src/components/RobotFallback.tsx` instead.
 
 ## Run locally
 
-Requires Node.js 22.12+ (Node 24 was used during development).
+Requires Node.js 22.12 or newer.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-The terminal prints the local address. Build and preview production output with:
+Vite prints the local development address. Create and preview a production build with:
 
 ```sh
 npm run build
 npm run preview
 ```
 
-`npm run typecheck` performs the strict TypeScript check. `dist/` is the deployment-ready static output.
+Run the strict TypeScript check independently with:
 
-## Update content
+```sh
+npm run typecheck
+```
 
-- `src/data.ts`: profile details, project descriptions/links, toolkit, learning topics and certification.
-- `src/App.tsx`: page sections, navigation and animation setup.
-- `src/components/ProjectDialog.tsx`: accessible project galleries and terminal examples.
-- `src/components/ProjectArt.tsx`: original Python-project illustrations and real Click Catalyst screenshot presentation.
-- `src/components/Robot.tsx`: original Three.js robot geometry, materials, lighting and motion.
-- `src/components/RobotFallback.tsx`: original static illustration for reduced motion or unavailable WebGL.
-- `src/components/Spotlight.tsx`: local requestAnimationFrame cursor interpolation, with cleanup.
-- `src/styles.css`: visual system and responsive rules.
-- `public/`: self-hosted font, optimized images, certificate PDF, metadata assets and crawler files.
+The deployable static site is written to `dist/`.
 
-Add additional certificates only after checking their actual files and details. The supplied CV is available through View CV and Download CV controls in the hero and mobile menu, plus a desktop navigation link. View CV opens the original SVG; Download CV saves a PDF containing the same unchanged design. Update the CV paths in `src/data.ts` when replacing it.
+## Project structure
 
-## Interaction and accessibility
+| Path | Purpose |
+| --- | --- |
+| `src/App.tsx` | Page composition, navigation, scroll effects, and robot loading |
+| `src/data.ts` | Profile, projects, skills, learning topics, certification, and asset paths |
+| `src/components/Robot.tsx` | Procedural Three.js robot and animated scene |
+| `src/components/RobotFallback.tsx` | Static robot illustration for reduced motion or unavailable WebGL |
+| `src/components/ProjectDialog.tsx` | Project details, galleries, and terminal examples |
+| `src/components/ProjectArt.tsx` | Project illustrations and screenshot presentation |
+| `src/components/Spotlight.tsx` | Pointer-following spotlight effect |
+| `src/styles.css` | Colors, layout, responsive styling, and interaction states |
+| `public/` | Self-hosted font, images, CV and certificate files, and site metadata |
+| `.github/workflows/deploy.yml` | Production build and GitHub Pages deployment |
 
-- Project cards open native modal dialogs. Escape closes; focus is trapped by the browser and returned to the invoking control.
-- Project filters use pressed-state buttons; galleries have labeled previous/next controls.
-- Native disclosure panels support keyboard interaction.
-- Mobile navigation is a modal dialog with focus restoration.
-- Reduced-motion mode removes moving text reveals, smooth scrolling and spotlight effects and uses the static robot illustration.
-- The robot chunk loads only after a successful WebGL2 capability check. Rendering pauses outside the hero and while the tab is hidden; a pause control is offered for the active 3D model.
-- No WebGL support: the static illustration is displayed without loading the Three.js chunk.
-- Touch devices use normal tap/focus states. No content requires a hover interaction.
-- Semantic landmarks, skip link, labels, focus styles, alt text and a useful noscript introduction are included.
+## Accessibility and performance
 
-## Content accuracy
+- Semantic page landmarks, a skip link, descriptive labels and alternative text, and visible keyboard focus.
+- Native dialogs and disclosure controls for keyboard-friendly project and navigation interactions.
+- Reduced-motion support for reveals, scrolling, spotlight, and the robot.
+- The 3D code loads only after a WebGL 2 capability check; rendering pauses when the robot is inactive or the browser tab is hidden.
+- Self-hosted fonts and assets; images and the 3D scene are loaded only where needed.
 
-The role is “Aspiring Python Backend & AI Developer.” The degree is BSc (Computing), Arden University, 2023–2027 expected. Internship content reflects the user’s confirmed frontend background. Currently learning subjects are labeled separately from technologies used.
+## Content
 
-Only Click Catalyst and the three specified Python projects are featured. The Python programs have terminal examples, not invented live web demos. Click Catalyst’s repository is private and labeled that way. Its screenshots show the current live site, which has evolved beyond the inspected repository; the description limits the contribution to frontend work.
+Update `src/data.ts` to edit profile details, projects, skills, learning topics, certification information, and related links. Page structure and interactions live in `src/App.tsx`; individual components and styles are under `src/components/` and `src/styles.css`.
 
-The phone link uses Pakistan’s international dialing prefix, `+92`, and the contact section displays the number in a readable format. Email and social links are direct links. Copy-email success feedback is included, with an email-client fallback when clipboard permission is unavailable. No form pretends to send a message.
+Project descriptions distinguish professional experience from learning projects. The Python examples are terminal programs, not live web applications. The Click Catalyst repository is private; its portfolio entry describes frontend contributions only. Replace the CV by updating its files in `public/` and the corresponding paths in `src/data.ts`.
 
-## Deploy to GitHub Pages
+## Deployment
 
-The production site is deployed from `main` by `.github/workflows/deploy.yml`. GitHub Pages should use **GitHub Actions** as its source. The Vite base path is configured for this repository’s project site:
+The live site is published at [https://muhammad-aseem.github.io/My-Portfolio/](https://muhammad-aseem.github.io/My-Portfolio/). The `.github/workflows/deploy.yml` workflow runs on pushes to `main` and on manual dispatch. It installs dependencies, runs the production build, and deploys `dist/` to GitHub Pages. The repository’s Pages source should be set to **GitHub Actions**.
 
-`https://muhammad-aseem.github.io/My-Portfolio/`
-
-Push changes to `main` to trigger a fresh build and deployment. The workflow runs `npm ci`, `npm run build`, and publishes `dist/`. The project has no server dependency or environment secrets.
-
-Vercel and Netlify configuration files are also included; both use the same Vite production build.
-
-All required project assets are local. Manrope is distributed with its original open font license in `public/fonts/Manrope-LICENSE.txt`. The Python project artwork and robot geometry/illustration are original code assets. Click Catalyst images are captures of the selected public project site. The certificate PDF and current CV files are user-supplied.
-
-See `TESTING.md` for the checks actually performed and remaining verification limits.
+Vercel and Netlify configuration files are also included for deployments using the same Vite build.
