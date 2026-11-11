@@ -9,8 +9,8 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/muhammad-aseem-498582328",
   x: "https://x.com/aseem_fs",
   cv: {
-    view: assetUrl("Muhammad-Aseem-CV-Accurate.pdf"),
-    download: assetUrl("Muhammad-Aseem-CV-Accurate.pdf"),
+    view: assetUrl("Muhammad_Aseem_CV.pdf"),
+    download: assetUrl("Muhammad_Aseem_CV.pdf"),
     filename: "Muhammad_Aseem_CV.pdf",
   },
 };
