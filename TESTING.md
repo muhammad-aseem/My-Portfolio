@@ -38,18 +38,11 @@ No Vercel or Netlify deployment or public access change was performed. The hando
 ## CV addition
 
 - Added View CV to desktop navigation and both View CV / Download CV to the hero and mobile menu.
-- The displayed SVG is byte-identical to the supplied upload.
-- The PDF contains the original embedded image on one page; rendered and visually checked without cropping or design changes.
-- Clicked View CV and verified the SVG document and accessible image label in the new browser tab.
-- Clicked Download CV and verified the completed browser download is byte-identical to the hosted PDF asset.
-- Verified both CV controls in the 390px responsive viewport and mobile menu; no horizontal overflow.
-- Strict TypeScript and production build pass with both CV assets present in dist.
-- The GitHub My-Portfolio repository was checked again during handoff and currently contains only .gitignore. The complete source is supplied separately as a ZIP; no GitHub upload is claimed in this report.
+- View CV and Download CV both use `public/Muhammad_Aseem_CV.pdf`, the latest supplied CV.
+- The download filename is `Muhammad_Aseem_CV.pdf`.
+- The latest CV replacement was verified with the strict TypeScript check and production build.
 
 ## Final CV handoff check
 
-- Re-ran strict TypeScript and the Vite production build successfully.
-- Opened the current preview and verified View CV opens the supplied SVG in a new tab.
-- Clicked Download CV and observed a completed PDF download.
-- Reconfirmed the supplied SVG matches the current website asset byte for byte.
-- Packaged the full source, public assets, setup instructions and compiled dist output together.
+- The supplied PDF is the CV used by the View CV and Download CV controls.
+- The Vite production build includes the current CV asset in `dist/`.
